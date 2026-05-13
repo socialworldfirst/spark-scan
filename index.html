@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>/spark_scan — automated signal radar</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  :root {
+    --fg: #111;
+    --fg-muted: #5b5b5b;
+    --fg-soft: #888;
+    --bg: #fafafa;
+    --bg-paper: #fff;
+    --hairline: rgba(0,0,0,0.09);
+    --hairline-soft: rgba(0,0,0,0.05);
+    --dot: #0a6d2f;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif; background: var(--bg); color: var(--fg); -webkit-font-smoothing: antialiased; line-height: 1.6; font-size: 16px; }
+
+  .layout { display: grid; grid-template-columns: 1fr; max-width: 1180px; margin: 0 auto; padding: 32px 24px 140px; }
+  .sidebar { display: none; }
+  .content { max-width: 760px; margin: 0 auto; }
+
+  /* HERO */
+  .hero { padding-bottom: 28px; border-bottom: 1px solid var(--hairline); margin-bottom: 36px; }
+  .eyebrow { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-soft); margin-bottom: 14px; }
+  .hero h1 { font-size: 36px; line-height: 1.1; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 14px; }
+  .lede { font-size: 17px; line-height: 1.5; color: var(--fg-muted); max-width: 620px; margin: 0 0 18px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 14px 24px; font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-soft); }
+
+  /* CONTROLS BAR */
+  .controls { position: sticky; top: 0; z-index: 40; background: var(--bg); padding: 14px 0 12px; margin: 0 0 28px; border-bottom: 1px solid var(--hairline); }
+  .control-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .control-label { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-soft); margin-right: 6px; }
+  .chip { font-size: 13px; padding: 6px 12px; border: 1px solid var(--hairline); border-radius: 100px; background: var(--bg-paper); cursor: pointer; color: var(--fg-muted); font-family: inherit; min-height: 32px; }
+  .chip:hover { border-color: rgba(0,0,0,0.3); color: var(--fg); }
+  .chip-active { background: var(--fg); color: #fff; border-color: var(--fg); }
+
+  /* SECTIONS */
+  section.dash { padding: 36px 0; border-top: 1px solid var(--hairline); position: relative; }
+  section.dash:first-of-type { border-top: none; padding-top: 0; }
+  .dash-num { position: absolute; top: 36px; left: -64px; font-family: var(--mono); font-size: 11px; color: var(--fg-soft); letter-spacing: 0.06em; }
+  .dash-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 6px; }
+  .dash-head h2 { font-size: 22px; line-height: 1.2; font-weight: 600; letter-spacing: -0.015em; margin: 0; }
+  .dash-head .num-inline { font-family: var(--mono); font-size: 12px; color: var(--fg-soft); letter-spacing: 0.06em; font-weight: 500; }
+  .dash-source { font-family: var(--mono); font-size: 11px; color: var(--fg-soft); }
+  .dash-desc { font-size: 13px; color: var(--fg-muted); margin: 0 0 18px; }
+  .dash-count { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-soft); margin-bottom: 14px; }
+  .dash-count strong { color: var(--fg); font-size: 14px; font-weight: 600; letter-spacing: 0; }
+
+  /* SIGNAL ITEM */
+  .signal-list { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--hairline); border-radius: 8px; overflow: hidden; background: var(--bg-paper); }
+  .signal { display: grid; grid-template-columns: 36px 1fr auto; gap: 14px; padding: 14px 16px; border-top: 1px solid var(--hairline-soft); align-items: start; }
+  .signal:first-child { border-top: none; }
+  .signal-num { font-family: var(--mono); font-size: 11px; color: var(--fg-soft); padding-top: 3px; }
+  .signal-body { min-width: 0; }
+  .signal-title { font-size: 14px; font-weight: 500; color: var(--fg); margin: 0 0 5px; line-height: 1.4; }
+  .signal-meta { display: flex; flex-wrap: wrap; gap: 12px; font-family: var(--mono); font-size: 11px; color: var(--fg-soft); }
+  .signal-meta span { display: inline-block; }
+  .signal-action { padding-top: 2px; }
+  .signal-send { font-family: var(--mono); font-size: 11px; padding: 5px 10px; border: 1px solid var(--hairline); border-radius: 100px; background: var(--bg-paper); cursor: pointer; color: var(--fg-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .signal-send:hover { border-color: var(--fg); color: var(--fg); }
+  .signal-send.sent { background: var(--fg); color: #fff; border-color: var(--fg); }
+
+  /* QUEUE PANEL */
+  .queue-panel { position: fixed; bottom: 0; left: 0; right: 0; background: var(--fg); color: #fff; z-index: 100; box-shadow: 0 -2px 16px rgba(0,0,0,0.18); }
+  .queue-panel.collapsed .queue-expanded { display: none; }
+  .queue-bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; cursor: pointer; gap: 12px; min-height: 56px; }
+  .queue-state { font-size: 14px; font-weight: 500; }
+  .queue-state .count-zero { color: #888; font-weight: 400; }
+  .queue-toggle { font-family: var(--mono); font-size: 11px; color: #aaa; text-transform: uppercase; letter-spacing: 0.05em; }
+  .queue-expanded { padding: 6px 18px 18px; max-height: 60vh; overflow-y: auto; }
+  .queue-list { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
+  .queue-row { display: grid; grid-template-columns: 60px 1fr; gap: 12px; padding: 8px 0; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .queue-row:last-child { border-bottom: none; }
+  .queue-id { font-family: var(--mono); font-size: 11px; color: #aaa; }
+  .queue-actions { margin-top: 14px; display: flex; gap: 8px; }
+  .queue-btn { padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; min-height: 40px; font-family: inherit; }
+  .btn-primary { background: #fff; color: #111; }
+  .btn-secondary { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.25); }
+
+  .foot { margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--hairline); font-family: var(--mono); font-size: 11px; color: var(--fg-soft); text-transform: uppercase; letter-spacing: 0.06em; }
+  .foot p { margin: 4px 0; }
+
+  /* DESKTOP LAYOUT */
+  @media (min-width: 980px) {
+    .layout { grid-template-columns: 220px 1fr; gap: 60px; padding-top: 56px; padding-bottom: 160px; }
+    .sidebar { display: block; position: sticky; top: 56px; align-self: start; padding-top: 6px; }
+    .sidebar-brand { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg); margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--hairline); }
+    .sidebar-brand-sub { display: block; color: var(--fg-soft); margin-top: 4px; font-weight: 400; letter-spacing: 0.04em; }
+    .toc { display: flex; flex-direction: column; gap: 4px; }
+    .toc a { color: var(--fg-soft); text-decoration: none; font-size: 13px; padding: 5px 0 5px 14px; border-left: 2px solid transparent; line-height: 1.4; }
+    .toc a span.toc-num { font-family: var(--mono); font-size: 11px; color: var(--fg-soft); margin-right: 8px; letter-spacing: 0.05em; }
+    .toc a:hover { color: var(--fg); }
+    .toc a.active { color: var(--fg); border-left-color: var(--fg); }
+    .toc-count { display: block; font-family: var(--mono); font-size: 10px; color: var(--fg-soft); margin-top: 2px; padding-left: 20px; letter-spacing: 0.05em; }
+    .content { max-width: 720px; margin: 0; }
+    .dash-num { left: -56px; }
+    .dash-head .num-inline { display: none; }
+    .queue-panel { max-width: 760px; left: 50%; transform: translateX(-50%); border-radius: 12px 12px 0 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      /spark_scan
+      <span class="sidebar-brand-sub">automated signal radar · v0 mock</span>
+    </div>
+    <nav class="toc" id="toc">
+      <a href="#viral"><span class="toc-num">01</span>Viral talking points<span class="toc-count">5 signals</span></a>
+      <a href="#monthly"><span class="toc-num">02</span>Monthly social listen<span class="toc-count">8 signals</span></a>
+      <a href="#sessions"><span class="toc-num">03</span>Session + handoff scan<span class="toc-count">6 signals</span></a>
+      <a href="#performance"><span class="toc-num">04</span>Performance-driven<span class="toc-count">6 signals</span></a>
+      <a href="#industry"><span class="toc-num">05</span>Industry pulse<span class="toc-count">5 signals</span></a>
+    </nav>
+  </aside>
+
+  <main class="content">
+
+    <header class="hero">
+      <div class="eyebrow">Sparkloop · automated initiator</div>
+      <h1>/spark_scan</h1>
+      <p class="lede">Fires all five automated signal sources in parallel, surfaces them in one place. Pick the signals worth iterating on, send them to <span style="font-family: var(--mono); font-size: 15px;">/spark_idea</span>.</p>
+      <div class="meta">
+        <span>5 sub-dashboards</span>
+        <span>v0 · UI mockup</span>
+        <span>Last scan · just now</span>
+      </div>
+    </header>
+
+    <!-- Controls -->
+    <div class="controls">
+      <div class="control-row" style="margin-bottom: 8px;">
+        <span class="control-label">Audience</span>
+        <button class="chip chip-active">All</button>
+        <button class="chip">operator_importer</button>
+        <button class="chip">operator_ecom</button>
+        <button class="chip">freelancer</button>
+        <button class="chip">1688_buyer</button>
+      </div>
+      <div class="control-row">
+        <span class="control-label">Window</span>
+        <button class="chip">7d</button>
+        <button class="chip">30d</button>
+        <button class="chip chip-active">90d</button>
+        <button class="chip">All time</button>
+        <span class="control-label" style="margin-left: 16px;">Topic filter</span>
+        <input type="text" placeholder="optional — e.g. cross-border payments" style="font-size: 13px; padding: 6px 10px; border: 1px solid var(--hairline); border-radius: 100px; background: var(--bg-paper); width: 220px; font-family: inherit;">
+      </div>
+    </div>
+
+    <!-- 01 Viral -->
+    <section class="dash" id="viral">
+      <div class="dash-num">01</div>
+      <div class="dash-head">
+        <h2><span class="num-inline">01 </span>Viral talking points</h2>
+        <span class="dash-source">/viral_talking_points</span>
+      </div>
+      <p class="dash-desc">Real-time engagement on Reddit / X / forums for the selected audience. Ranked by engagement velocity.</p>
+      <div class="dash-count"><strong>5</strong> signals · scanned 90d · audience: all</div>
+      <div class="signal-list">
+        <div class="signal">
+          <div class="signal-num">01</div>
+          <div class="signal-body">
+            <h3 class="signal-title">Why we stopped using PayPal for Chinese supplier payments</h3>
+            <div class="signal-meta"><span>r/Entrepreneur</span><span>847 upvotes · 234 comments</span><span>3d ago</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'V-01', 'PayPal for Chinese supplier payments')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">02</div>
+          <div class="signal-body">
+            <h3 class="signal-title">Wise vs WorldFirst for B2B: the real numbers</h3>
+            <div class="signal-meta"><span>X thread @smebuilder</span><span>1.2K likes · 412 reposts</span><span>5d ago</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'V-02', 'Wise vs WorldFirst B2B numbers')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">03</div>
+          <div class="signal-body">
+            <h3 class="signal-title">Got hit with $1,200 'mystery fee' on a $50K wire to China</h3>
+            <div class="signal-meta"><span>r/ecommerce</span><span>412 upvotes · 178 comments</span><span>1w ago</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'V-03', '1200 mystery fee on 50K wire')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">04</div>
+          <div class="signal-body">
+            <h3 class="signal-title">Anyone else getting their card declined when paying 1688 suppliers?</h3>
+            <div class="signal-meta"><span>r/AmazonSeller</span><span>234 upvotes · 89 comments</span><span>2w ago</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'V-04', 'Card declined paying 1688')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">05</div>
+          <div class="signal-body">
+            <h3 class="signal-title">The 0.5% FX margin lesson that cost me a holiday</h3>
+            <div class="signal-meta"><span>r/smallbusiness</span><span>156 upvotes · 67 comments</span><span>3w ago</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'V-05', '0.5% FX margin compounding')">SEND</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 Monthly -->
+    <section class="dash" id="monthly">
+      <div class="dash-num">02</div>
+      <div class="dash-head">
+        <h2><span class="num-inline">02 </span>Monthly social listen</h2>
+        <span class="dash-source">/wf_monthly_listen</span>
+      </div>
+      <p class="dash-desc">90-day landscape across Reddit, X, Google Trends, TikTok, YouTube. Trending topics with cross-platform signal strength.</p>
+      <div class="dash-count"><strong>8</strong> signals · scanned 90d · audience: all</div>
+      <div class="signal-list">
+        <div class="signal">
+          <div class="signal-num">01</div>
+          <div class="signal-body">
+            <h3 class="signal-title">"Cross-border payments" — search volume +23% MoM</h3>
+            <div class="signal-meta"><span>Google Trends</span><span>TikTok #payments +187%</span><span>strong</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'M-01', 'Cross-border payments rising search')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">02</div>
+          <div class="signal-body">
+            <h3 class="signal-title">"MYbank routing" — Reddit mentions up 4x, X up 2.1x</h3>
+            <div class="signal-meta"><span>Reddit + X</span><span>cross-platform</span><span>strong</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'M-02', 'MYbank routing trend')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">03</div>
+          <div class="signal-body">
+            <h3 class="signal-title">"Trade Assurance fees" — r/AlibabaSourcing trending</h3>
+            <div class="signal-meta"><span>Reddit</span><span>76 threads / 90d</span><span>medium</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'M-03', 'Trade Assurance fees trending')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">04</div>
+          <div class="signal-body">
+            <h3 class="signal-title">"Marketplace payouts SEA" — YouTube watch time +45%</h3>
+            <div class="signal-meta"><span>YouTube</span><span>SEA region heavy</span><span>medium</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'M-04', 'Marketplace payouts SEA growth')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">05</div>
+          <div class="signal-body">
+            <h3 class="signal-title">"1688 sourcing" — TikTok creators up 3x in SEA</h3>
+            <div class="signal-meta"><span>TikTok</span><span>SEA region</span><span>strong</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'M-05', '1688 sourcing TikTok rise')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">06</div>
+          <div class="signal-body">
+            <h3 class="signal-title">"Supplier payments" — X conversations up 67% YoY</h3>
+            <div class="signal-meta"><span>X</span><span>B2B finance accounts</span><span>medium</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'M-06', 'Supplier payments X conversations')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">07</div>
+          <div class="signal-body">
+            <h3 class="signal-title">"FX margin hidden cost" — Reddit pain threads up</h3>
+            <div class="signal-meta"><span>Reddit cross-sub</span><span>r/business, r/Entrepreneur</span><span>medium</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'M-07', 'FX margin hidden cost pain')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">08</div>
+          <div class="signal-body">
+            <h3 class="signal-title">"World Account" — branded search +12% MoM</h3>
+            <div class="signal-meta"><span>Google Trends</span><span>WF brand metric</span><span>medium</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'M-08', 'World Account branded search growth')">SEND</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 Sessions -->
+    <section class="dash" id="sessions">
+      <div class="dash-num">03</div>
+      <div class="dash-head">
+        <h2><span class="num-inline">03 </span>Session + handoff scan</h2>
+        <span class="dash-source">/spark_scan (legacy)</span>
+      </div>
+      <p class="dash-desc">All session histories and handoff folders, treated as artefact pool. Extracts unspent talking points across the full archive (not just last 7 days).</p>
+      <div class="dash-count"><strong>6</strong> signals · scanned all sessions · ranked by freshness × relevance</div>
+      <div class="signal-list">
+        <div class="signal">
+          <div class="signal-num">01</div>
+          <div class="signal-body">
+            <h3 class="signal-title">12% hidden agent markup on Chinese sourcing (unbanked from CSM research)</h3>
+            <div class="signal-meta"><span>2026-05-09 CSM handoff</span><span>not produced</span><span>high relevance</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'S-01', '12% hidden agent markup')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">02</div>
+          <div class="signal-body">
+            <h3 class="signal-title">Yiwu vs Foshan furniture sourcing comparison</h3>
+            <div class="signal-meta"><span>2026-05-09 CSM handoff</span><span>not produced</span><span>medium</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'S-02', 'Yiwu vs Foshan furniture')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">03</div>
+          <div class="signal-body">
+            <h3 class="signal-title">5 hidden taxes on cross-border supplier payments</h3>
+            <div class="signal-meta"><span>2026-04-22 session</span><span>not produced</span><span>medium</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'S-03', '5 hidden taxes on supplier payments')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">04</div>
+          <div class="signal-body">
+            <h3 class="signal-title">Trade Assurance "trench coat" framing (Alibaba's safety net analogy)</h3>
+            <div class="signal-meta"><span>2026-05-07 Trade Assurance handoff</span><span>partially produced</span><span>high</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'S-04', 'Trade Assurance trench coat framing')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">05</div>
+          <div class="signal-body">
+            <h3 class="signal-title">USD wire by city — different fees per Chinese supplier city</h3>
+            <div class="signal-meta"><span>2026-03 CSM city research</span><span>not produced</span><span>medium</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'S-05', 'USD wire by city differences')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">06</div>
+          <div class="signal-body">
+            <h3 class="signal-title">L2L flywheel — supplier verification as content angle</h3>
+            <div class="signal-meta"><span>L2L strategy session</span><span>not produced</span><span>strategic</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'S-06', 'Supplier verification flywheel')">SEND</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 Performance -->
+    <section class="dash" id="performance">
+      <div class="dash-num">04</div>
+      <div class="dash-head">
+        <h2><span class="num-inline">04 </span>Performance-driven</h2>
+        <span class="dash-source">/spark_from_perf · wraps /watched + /boosted</span>
+      </div>
+      <p class="dash-desc">Top performers from last 90 days. Spark variations on what's already winning.</p>
+      <div class="dash-count"><strong>6</strong> signals · top 90d performers · ranked by engagement × boost ROI</div>
+      <div class="signal-list">
+        <div class="signal">
+          <div class="signal-num">01</div>
+          <div class="signal-body">
+            <h3 class="signal-title">"How does CNY actually pay" — explainer reel · 5.2% engagement</h3>
+            <div class="signal-meta"><span>TikTok @worldfirstsea</span><span>top 3% of 90d</span><span>spark variations</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'P-01', 'How does CNY actually pay variations')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">02</div>
+          <div class="signal-body">
+            <h3 class="signal-title">2% bank-to-rail comparison · YT Short 60s · 8.1% save rate</h3>
+            <div class="signal-meta"><span>YouTube Shorts</span><span>top 1% save</span><span>spark variations</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'P-02', '2% bank-to-rail save-rate winner')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">03</div>
+          <div class="signal-body">
+            <h3 class="signal-title">"Hidden fee on $50K wire" · LinkedIn carousel · $14 CPM, 4.3% CTR</h3>
+            <div class="signal-meta"><span>LinkedIn boost</span><span>top 5% boost ROI</span><span>spark variations</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'P-03', 'Hidden fee carousel format')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">04</div>
+          <div class="signal-body">
+            <h3 class="signal-title">"5 reasons your wire bounces" · IG reel · 12K saves</h3>
+            <div class="signal-meta"><span>Instagram</span><span>top 2% save</span><span>spark variations</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'P-04', '5 reasons wire bounces save rate')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">05</div>
+          <div class="signal-body">
+            <h3 class="signal-title">Pay to China longform · YT 10 min · 14K views, 7.2 min avg watch</h3>
+            <div class="signal-meta"><span>YouTube</span><span>top 5% watch time</span><span>spark variations</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'P-05', 'Pay to China longform pattern')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">06</div>
+          <div class="signal-body">
+            <h3 class="signal-title">"Wise vs WF" comparison post · FB · 3.1% organic engagement (high for FB)</h3>
+            <div class="signal-meta"><span>Facebook</span><span>top 3% organic</span><span>spark variations</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'P-06', 'Wise vs WF comparison FB winner')">SEND</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 Industry -->
+    <section class="dash" id="industry">
+      <div class="dash-num">05</div>
+      <div class="dash-head">
+        <h2><span class="num-inline">05 </span>Industry pulse</h2>
+        <span class="dash-source">/spark_pulse · new</span>
+      </div>
+      <p class="dash-desc">Payments and fintech-adjacent trends, filtered for WF relevance. Excludes generic competitor news (Wise IPO, Stripe acquires X) that doesn't translate to social.</p>
+      <div class="dash-count"><strong>5</strong> signals · 90d · WF-relevance filter applied</div>
+      <div class="signal-list">
+        <div class="signal">
+          <div class="signal-num">01</div>
+          <div class="signal-body">
+            <h3 class="signal-title">MAS approves 3 new fintechs for SME cross-border payments in Singapore</h3>
+            <div class="signal-meta"><span>regulatory</span><span>WF relevance: high</span><span>angle: trust + verification</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'I-01', 'MAS SME cross-border approvals')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">02</div>
+          <div class="signal-body">
+            <h3 class="signal-title">Alibaba expanding Trade Assurance reach in Malaysia + Vietnam</h3>
+            <div class="signal-meta"><span>competitive</span><span>WF relevance: high</span><span>angle: TA pros vs direct rail</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'I-02', 'Alibaba TA expansion MY VN')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">03</div>
+          <div class="signal-body">
+            <h3 class="signal-title">PayPal launches new B2B cross-border tool in Asia</h3>
+            <div class="signal-meta"><span>competitive</span><span>WF relevance: medium</span><span>angle: cost decomposition vs PayPal</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'I-03', 'PayPal B2B cross-border Asia')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">04</div>
+          <div class="signal-body">
+            <h3 class="signal-title">SWIFT rolls out next-gen cross-border standard (ISO 20022 final phase)</h3>
+            <div class="signal-meta"><span>infrastructure</span><span>WF relevance: medium</span><span>angle: explainer of what changes</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'I-04', 'SWIFT ISO 20022 final phase')">SEND</button></div>
+        </div>
+        <div class="signal">
+          <div class="signal-num">05</div>
+          <div class="signal-body">
+            <h3 class="signal-title">Chinese suppliers increasingly requesting CNY-denominated invoices</h3>
+            <div class="signal-meta"><span>supply-side trend</span><span>WF relevance: high</span><span>angle: why CNY wins (P1-A6 territory)</span></div>
+          </div>
+          <div class="signal-action"><button class="signal-send" onclick="toggleSend(this, 'I-05', 'Suppliers requesting CNY invoices')">SEND</button></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <p>/spark_scan · UI mockup v0 · 2026-05-13</p>
+      <p>Real wiring: /viral_talking_points · /wf_monthly_listen · /spark_scan (legacy) · /watched + /boosted · /spark_pulse (new)</p>
+    </footer>
+
+  </main>
+</div>
+
+<!-- Queue panel -->
+<div class="queue-panel collapsed" id="queue-panel">
+  <div class="queue-bar" onclick="togglePanel()">
+    <span class="queue-state"><span id="queue-count" class="count-zero">0 signals queued</span> for /spark_idea</span>
+    <span class="queue-toggle" id="queue-toggle">tap to expand</span>
+  </div>
+  <div class="queue-expanded">
+    <div class="queue-list" id="queue-list"></div>
+    <div class="queue-actions">
+      <button class="queue-btn btn-primary" onclick="sendToSparkIdea()">Send selected to /spark_idea</button>
+      <button class="queue-btn btn-secondary" onclick="clearQueue()">Clear queue</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Mock interaction: toggle send, queue state, panel
+  let queue = {};
+  function toggleSend(btn, id, title) {
+    if (queue[id]) {
+      delete queue[id];
+      btn.classList.remove('sent');
+      btn.textContent = 'SEND';
+    } else {
+      queue[id] = title;
+      btn.classList.add('sent');
+      btn.textContent = 'QUEUED';
+    }
+    renderQueue();
+  }
+  function renderQueue() {
+    const count = Object.keys(queue).length;
+    const countEl = document.getElementById('queue-count');
+    countEl.textContent = count + ' signal' + (count === 1 ? '' : 's') + ' queued';
+    countEl.classList.toggle('count-zero', count === 0);
+    const listEl = document.getElementById('queue-list');
+    listEl.innerHTML = '';
+    Object.entries(queue).forEach(([id, title]) => {
+      const row = document.createElement('div');
+      row.className = 'queue-row';
+      row.innerHTML = '<span class="queue-id">' + id + '</span><span>' + title + '</span>';
+      listEl.appendChild(row);
+    });
+  }
+  function togglePanel() {
+    const p = document.getElementById('queue-panel');
+    const t = document.getElementById('queue-toggle');
+    p.classList.toggle('collapsed');
+    t.textContent = p.classList.contains('collapsed') ? 'tap to expand' : 'tap to collapse';
+  }
+  function sendToSparkIdea() {
+    alert('Mock: would send ' + Object.keys(queue).length + ' signals to /spark_idea.\n\nIn the real build, this kicks off /spark_idea with the queued items as v1 input.');
+  }
+  function clearQueue() {
+    queue = {};
+    document.querySelectorAll('.signal-send.sent').forEach(b => { b.classList.remove('sent'); b.textContent = 'SEND'; });
+    renderQueue();
+  }
+  // Scrollspy
+  const links = Array.from(document.querySelectorAll('.toc a'));
+  const sections = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  function onScroll() {
+    let active = sections[0];
+    const top = window.scrollY + 120;
+    sections.forEach(s => { if (s.offsetTop <= top) active = s; });
+    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + active.id));
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>
+
+</body>
+</html>
