@@ -1,290 +1,188 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex">
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
 <title>Spark Scan · 2026-05-29 · week 2026-05-22 to 2026-05-29</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;450;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --ink:#16161a; --ink-2:#55555c; --ink-3:#8a8a92; --ink-4:#b4b4ba;
-    --line:#e7e7e9; --line-2:#efeff1; --bg:#fbfbfa; --card:#fff;
-    --serif:'Fraunces',Georgia,'Times New Roman',serif;
-    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  }
-  *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
-    font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;}
-  .wrap{display:grid;grid-template-columns:264px 1fr;max-width:1180px;margin:0 auto;}
-  /* sidebar */
-  aside{position:sticky;top:0;height:100vh;padding:54px 30px 40px;border-right:1px solid var(--line);}
-  .brand{font-family:var(--serif);font-size:21px;font-weight:600;letter-spacing:-.01em;}
-  .brand small{display:block;font-family:var(--sans);font-size:11.5px;font-weight:500;
-    text-transform:uppercase;letter-spacing:.13em;color:var(--ink-3);margin-top:9px;}
-  nav{margin-top:38px;display:flex;flex-direction:column;gap:2px;}
-  .nav-link{display:flex;align-items:center;justify-content:space-between;
-    text-decoration:none;color:var(--ink-2);font-size:13.5px;font-weight:450;
-    padding:7px 0;border:none;transition:color .15s;}
-  .nav-link:hover{color:var(--ink)}
-  .nav-link.active{color:var(--ink);font-weight:600}
-  .nav-link.active::before{content:"";position:absolute;left:0;width:2px;height:15px;background:var(--ink);margin-top:1px}
-  nav{position:relative}
+  :root{--ink:#16161a;--ink-2:#55555c;--ink-3:#8a8a92;--ink-4:#b4b4ba;--line:#e7e7e9;--line-2:#efeff1;--bg:#fbfbfa;--serif:'Fraunces',Georgia,serif;--sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
+  *{box-sizing:border-box}html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{display:grid;grid-template-columns:264px 1fr;max-width:1180px;margin:0 auto}
+  aside{position:sticky;top:0;height:100vh;padding:54px 30px 40px;border-right:1px solid var(--line)}
+  .brand{font-family:var(--serif);font-size:21px;font-weight:600;letter-spacing:-.01em}
+  .brand small{display:block;font-family:var(--sans);font-size:11.5px;font-weight:500;text-transform:uppercase;letter-spacing:.13em;color:var(--ink-3);margin-top:9px}
+  nav{margin-top:38px;display:flex;flex-direction:column;gap:2px;position:relative}
+  .nav-link{display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:var(--ink-2);font-size:13.5px;font-weight:450;padding:7px 0;transition:color .15s}
+  .nav-link:hover{color:var(--ink)}.nav-link.active{color:var(--ink);font-weight:600}
   .nav-c{font-size:11px;color:var(--ink-4);font-variant-numeric:tabular-nums;font-weight:500}
-  .aside-foot{position:absolute;bottom:34px;font-size:11.5px;color:var(--ink-4);line-height:1.5}
-  /* main */
+  .aside-foot{position:absolute;bottom:34px;font-size:11.5px;color:var(--ink-4);line-height:1.55}
   main{padding:54px 56px 120px;min-width:0}
-  .head h1{font-family:var(--serif);font-size:40px;font-weight:600;line-height:1.05;
-    letter-spacing:-.02em;margin:0 0 14px}
+  .head .stamp{font-size:12px;text-transform:uppercase;letter-spacing:.11em;color:var(--ink-3);margin:0 0 18px}
+  .head h1{font-family:var(--serif);font-size:40px;font-weight:600;line-height:1.05;letter-spacing:-.02em;margin:0 0 14px}
   .head .lede{font-size:16.5px;color:var(--ink-2);max-width:62ch;margin:0}
-  .head .stamp{font-size:12px;text-transform:uppercase;letter-spacing:.13em;color:var(--ink-3);margin:0 0 18px}
-  /* overview stats */
-  #overview{margin-top:46px;padding-top:34px;border-top:1px solid var(--line)}
+  #overview{margin-top:46px;padding-top:34px;border-top:1px solid var(--line);scroll-margin-top:30px}
   .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:6px}
-  .stat{padding:4px 22px 4px 0;border-right:1px solid var(--line-2)}
-  .stat:last-child{border-right:none}
+  .stat{padding:4px 22px 4px 0;border-right:1px solid var(--line-2)}.stat:last-child{border-right:none}
   .stat .n{font-family:var(--serif);font-size:34px;font-weight:500;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums}
   .stat .l{font-size:11.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);margin-top:9px}
-  .ov-note{font-size:14.5px;color:var(--ink-2);margin:30px 0 0;max-width:70ch}
-  .ov-note b{font-weight:600;color:var(--ink)}
-  /* sections */
-  .sec{margin-top:64px;scroll-margin-top:30px}
-  .sec-head{margin-bottom:26px}
+  .ov-note{font-size:14.5px;color:var(--ink-2);margin:30px 0 0;max-width:70ch}.ov-note b{font-weight:600;color:var(--ink)}
+  .sec{margin-top:64px;scroll-margin-top:30px}.sec-head{margin-bottom:22px}
   .sec-eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-3)}
-  .sec-head h2{font-family:var(--serif);font-size:25px;font-weight:600;letter-spacing:-.015em;margin:7px 0 6px}
-  .sec-sub{font-size:14.5px;color:var(--ink-2);margin:0;max-width:68ch}
+  .sec-head h2{font-family:var(--serif);font-size:25px;font-weight:600;letter-spacing:-.015em;margin:7px 0 0}
   .cards{display:flex;flex-direction:column;gap:0}
-  .card{padding:26px 0;border-top:1px solid var(--line)}
-  .card:first-child{border-top:1px solid var(--ink);}
+  .card{padding:26px 0;border-top:1px solid var(--line)}.card:first-child{border-top:1px solid var(--ink)}
   .card-top{display:flex;align-items:center;justify-content:space-between;gap:18px}
-  .sid{font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  .sid{font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  .flag{margin-left:10px;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);border:1px solid var(--line);border-radius:3px;padding:2px 6px;font-weight:600}
   .meter{display:flex;align-items:center;gap:10px;width:168px}
   .meter-track{flex:1;height:3px;background:var(--line);border-radius:2px;overflow:hidden}
   .meter-fill{height:100%;background:var(--ink);border-radius:2px}
-  .meter-n{font-size:13px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;width:22px;text-align:right}
+  .meter-n{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;width:22px;text-align:right}
   .tags{margin:13px 0 0;font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-2)}
-  .tags .aud{font-weight:600;color:var(--ink)}
-  .tags .sep{color:var(--ink-4);margin:0 8px}
-  .tags .art{color:var(--ink-3)}
-  .spark{font-family:var(--serif);font-size:21px;font-weight:500;line-height:1.28;
-    letter-spacing:-.011em;margin:11px 0 10px;max-width:40ch}
+  .tags .aud{font-weight:600;color:var(--ink)}.tags .sep{color:var(--ink-4);margin:0 8px}.tags .art{color:var(--ink-3)}
+  .spark{font-family:var(--serif);font-size:21px;font-weight:500;line-height:1.28;letter-spacing:-.011em;margin:11px 0 10px;max-width:42ch}
   .why{font-size:15px;color:var(--ink-2);margin:0;max-width:72ch}
   .metaline{font-size:13px;color:var(--ink-3);margin-top:14px}
-  .mk,.note-k{display:inline-block;font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;
-    color:var(--ink-4);margin-right:10px;font-weight:600}
+  .mk,.note-k{display:inline-block;font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-4);margin-right:10px;font-weight:600}
   .note{font-size:13px;color:var(--ink-3);margin:8px 0 0;max-width:72ch}
-  /* filtering */
   #filtering{margin-top:72px;padding-top:34px;border-top:1px solid var(--line);scroll-margin-top:30px}
-  #filtering h2{font-family:var(--serif);font-size:25px;font-weight:600;letter-spacing:-.015em;margin:0 0 8px}
-  #filtering .sec-sub{margin-bottom:24px}
-  .gates{display:flex;gap:34px;margin:0 0 30px;flex-wrap:wrap}
+  #filtering h2{font-family:var(--serif);font-size:25px;font-weight:600;letter-spacing:-.015em;margin:7px 0 8px}
+  .gates{display:flex;gap:34px;margin:18px 0 26px;flex-wrap:wrap}
   .gate .n{font-family:var(--serif);font-size:26px;font-weight:500;font-variant-numeric:tabular-nums}
   .gate .l{font-size:11.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);margin-top:5px}
-  table{width:100%;border-collapse:collapse;font-size:13.5px}
-  th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;
-    color:var(--ink-3);font-weight:600;padding:0 14px 11px 0;border-bottom:1px solid var(--ink)}
-  td{padding:13px 14px 13px 0;border-bottom:1px solid var(--line-2);vertical-align:top;color:var(--ink-2)}
-  .d-name{color:var(--ink);font-weight:500;width:38%}
-  .d-score{font-variant-numeric:tabular-nums;color:var(--ink-3);width:9%;white-space:nowrap}
-  .skip{font-size:13.5px;color:var(--ink-2);margin:26px 0 0;padding:16px 0 0;border-top:1px solid var(--line-2)}
-  .skip b{color:var(--ink);font-weight:600}
-  @media(max-width:860px){
-    .wrap{grid-template-columns:1fr}
-    aside{position:static;height:auto;border-right:none;border-bottom:1px solid var(--line);padding:32px 24px}
-    .aside-foot{position:static;margin-top:24px}
-    nav{margin-top:22px}
-    main{padding:34px 24px 90px}
-    .stats{grid-template-columns:repeat(2,1fr);gap:22px 0}
-    .stat{border-right:none}
-    .head h1{font-size:32px}
-  }
-</style>
-</head>
-<body>
-<div class="wrap">
+  .gate-notes{font-size:14px;color:var(--ink-2);max-width:74ch;line-height:1.7}
+  @media(max-width:860px){.wrap{grid-template-columns:1fr}aside{position:static;height:auto;border-right:none;border-bottom:1px solid var(--line);padding:32px 24px}.aside-foot{position:static;margin-top:24px}main{padding:34px 24px 90px}.stats{grid-template-columns:repeat(2,1fr);gap:22px 0}.stat{border-right:none}.head h1{font-size:32px}}
+</style></head>
+<body><div class="wrap">
   <aside>
     <div class="brand">Spark Scan<small>Content Bank · spark_scan · 2026-05-29</small></div>
-    <nav><a href="#overview" class="nav-link" data-t="overview">Overview</a><a href="#sec-yiwu" class="nav-link" data-t="sec-yiwu">Yiwu EP.3 research<span class="nav-c">5</span></a><a href="#sec-cj" class="nav-link" data-t="sec-cj">CJ Dropshipping event<span class="nav-c">2</span></a><a href="#sec-my" class="nav-link" data-t="sec-my">Malaysia Spark v2<span class="nav-c">3</span></a><a href="#filtering" class="nav-link" data-t="filtering">Filtering &amp; drops</a></nav>
+    <nav><a href="#overview" class="nav-link" data-t="overview">Overview</a><a href="#sec-yiwu" class="nav-link" data-t="sec-yiwu">Yiwu EP.3 research<span class="nav-c">5</span></a><a href="#sec-malaysia" class="nav-link" data-t="sec-malaysia">Malaysia Spark<span class="nav-c">3</span></a><a href="#sec-cj" class="nav-link" data-t="sec-cj">CJ Dropshipping event<span class="nav-c">2</span></a><a href="#sec-meetings" class="nav-link" data-t="sec-meetings">Meetings<span class="nav-c">1</span></a><a href="#filtering" class="nav-link" data-t="filtering">Filtering &amp; gates</a></nav>
     <div class="aside-foot">Run date 2026-05-29 · ISO week 22<br>Window 2026-05-22 to 2026-05-29<br>Internal session mining · status: raw</div>
   </aside>
   <main>
     <div class="head">
       <p class="stamp">Run date 2026-05-29 · Week window 2026-05-22 to 2026-05-29 · ISO week 22</p>
-      <h1>10 sparks to bank</h1>
-      <p class="lede">First non-zero scan since 2026-05-13. Three rich, never-mined customer-content sources entered the window. Each candidate cleared the privacy, audience and purpose gates, then the top half by score was kept.</p>
+      <h1>11 sparks to bank</h1>
+      <p class="lede">Internal mining of the last 7 days of sessions, handoffs, the inbox and meetings. Every candidate cleared the privacy, audience and purpose gates, then the top half by fit was kept.</p>
     </div>
-
     <section id="overview" class="sec" style="scroll-margin-top:30px">
       <div class="stats">
-        <div class="stat"><div class="n">10</div><div class="l">Sparks added</div></div>
-        <div class="stat"><div class="n">13</div><div class="l">Sources scanned</div></div>
-        <div class="stat"><div class="n">1</div><div class="l">Privacy skip</div></div>
+        <div class="stat"><div class="n">11</div><div class="l">Sparks added</div></div>
+        <div class="stat"><div class="n">19</div><div class="l">Sources scanned</div></div>
+        <div class="stat"><div class="n">4</div><div class="l">Privacy skips</div></div>
         <div class="stat"><div class="n">0</div><div class="l">Audience drift</div></div>
-        <div class="stat"><div class="n">10</div><div class="l">Scoring drops</div></div>
+        <div class="stat"><div class="n">4</div><div class="l">Purpose holds</div></div>
       </div>
-      <p class="ov-note">SS019 to SS028 are now in the bank. Spread: <b>Operator E-commerce ×2</b> (new coverage), <b>1688 Buyer ×3</b>, <b>Operator Importer ×5</b>. Sorted by score within each source below. Sharpen the ones worth a brief, drop the rest.</p>
+      <p class="ov-note">Audience spread: <b>Operator Importer ×6 · 1688 Buyer ×3 · Operator E-commerce ×2</b>. Sorted by audience fit within each source below.</p>
     </section>
-
     <section id="sec-yiwu" class="sec">
-  <div class="sec-head"><span class="sec-eyebrow">Source</span><h2>Yiwu EP.3 research</h2><p class="sec-sub">Five sparks. The single richest never-mined source this window.</p></div>
+  <div class="sec-head"><span class="sec-eyebrow">Source</span><h2>Yiwu EP.3 research</h2></div>
   <div class="cards"><article class="card">
-  <div class="card-top">
-    <span class="sid">SS021</span>
-    <div class="meter"><div class="meter-track"><div class="meter-fill" style="width:92%"></div></div><span class="meter-n">92</span></div>
-  </div>
+  <div class="card-top"><span class="sid">SS021</span>
+    <div class="meter"><div class="meter-track"><div class="meter-fill" style="width:92%"></div></div><span class="meter-n">92</span></div></div>
   <div class="tags"><span class="aud">1688 Buyer</span><span class="sep">/</span><span class="art">CSM</span></div>
   <h3 class="spark">Thirty suppliers means thirty currency conversions, that is why buyers cave to agents</h3>
   <p class="why">Yiwu research names the real reason foreign buyers hand sourcing to agents: paying many suppliers direct means a separate FX conversion each time. One multi-currency account paying in CNY removes the exact friction the agent monetises.</p>
-  <div class="metaline"><span class="mk">Format</span>Reel, Carousel, LinkedIn longform</div>
-  <p class="note"><span class="note-k">Note</span>Strongest WF product bridge in the Yiwu set. Explains WHY the agent model exists, distinct from SS023 which explains HOW the agent hides the markup.</p>
+  <div class="metaline"><span class="mk">Format</span>Reel, Carousel, LinkedIn longform</div><p class="note"><span class="note-k">Note</span>Strongest WF product bridge in the Yiwu set. Explains WHY the agent model exists, distinct from SS023 which explains HOW the agent hides the markup.</p>
 </article>
 <article class="card">
-  <div class="card-top">
-    <span class="sid">SS022</span>
-    <div class="meter"><div class="meter-track"><div class="meter-fill" style="width:91%"></div></div><span class="meter-n">91</span></div>
-  </div>
+  <div class="card-top"><span class="sid">SS022</span>
+    <div class="meter"><div class="meter-track"><div class="meter-fill" style="width:91%"></div></div><span class="meter-n">91</span></div></div>
   <div class="tags"><span class="aud">1688 Buyer</span><span class="sep">/</span><span class="art">CSM</span></div>
   <h3 class="spark">The highest-volume seller on 1688 is usually not the factory</h3>
   <p class="why">Yiwu research surfaces the 1688 paradox: top-volume Yiwu stores are trading companies, because real factories are busy producing and run weak online shops. Highest volume is a middleman signal, not a quality one. Counter-intuitive and directly actionable.</p>
-  <div class="metaline"><span class="mk">Format</span>Reel, Carousel, LinkedIn longform</div>
-  <p class="note"><span class="note-k">Note</span>Pairs with SS025 (how to read badges) as a &#x27;spot the real factory&#x27; mini-series.</p>
+  <div class="metaline"><span class="mk">Format</span>Reel, Carousel, LinkedIn longform</div><p class="note"><span class="note-k">Note</span>Pairs with SS025 (how to read badges) as a &#x27;spot the real factory&#x27; mini-series.</p>
 </article>
 <article class="card">
-  <div class="card-top">
-    <span class="sid">SS025</span>
-    <div class="meter"><div class="meter-track"><div class="meter-fill" style="width:88%"></div></div><span class="meter-n">88</span></div>
-  </div>
+  <div class="card-top"><span class="sid">SS025</span>
+    <div class="meter"><div class="meter-track"><div class="meter-fill" style="width:88%"></div></div><span class="meter-n">88</span></div></div>
   <div class="tags"><span class="aud">1688 Buyer</span><span class="sep">/</span><span class="art">CSM</span></div>
   <h3 class="spark">How to read 1688 supplier badges, from Super Factory down to Chengxintong</h3>
   <p class="why">Yiwu research maps the 1688 trust ladder: Super Factory (audited capability) down to Chengxintong (6,688 yuan a year, only needs a licence). Most buyers cannot tell a verified factory from a paid badge. Concrete verification guide.</p>
-  <div class="metaline"><span class="mk">Format</span>Carousel, Reel, LinkedIn longform</div>
-  <p class="note"><span class="note-k">Note</span>Carousel-native (a ladder graphic). Add the &#x27;check transactions and reviews, not just the badge&#x27; coda from the research.</p>
+  <div class="metaline"><span class="mk">Format</span>Carousel, Reel, LinkedIn longform</div><p class="note"><span class="note-k">Note</span>Carousel-native (a ladder graphic). Add the &#x27;check transactions and reviews, not just the badge&#x27; coda from the research.</p>
 </article>
 <article class="card">
-  <div class="card-top">
-    <span class="sid">SS024</span>
-    <div class="meter"><div class="meter-track"><div class="meter-fill" style="width:86%"></div></div><span class="meter-n">86</span></div>
-  </div>
+  <div class="card-top"><span class="sid">SS024</span>
+    <div class="meter"><div class="meter-track"><div class="meter-fill" style="width:86%"></div></div><span class="meter-n">86</span></div></div>
   <div class="tags"><span class="aud">Operator Importer</span><span class="sep">/</span><span class="art">CSM</span></div>
   <h3 class="spark">Yiwu&#x27;s Gen 6 trade centre now demos drones, robots and an AI saleswoman</h3>
   <p class="why">The Global Digital Trade Centre opened October 2025: 1.25 million square metres, double-size stalls for big products, 57 percent own-brand merchants, AI sourcing tools. The freshest reason to revisit Yiwu in 2026 and the EP.3 hook.</p>
-  <div class="metaline"><span class="mk">Format</span>YouTube, Reel, Carousel</div>
-  <p class="note"><span class="note-k">Note</span>Timely 2026 hook. Already the anchor of the EP.3 narrative (Frame A). Bank for short-form spinoffs off the long video.</p>
+  <div class="metaline"><span class="mk">Format</span>YouTube, Reel, Carousel</div><p class="note"><span class="note-k">Note</span>Timely 2026 hook. Already the anchor of the EP.3 narrative (Frame A). Bank for short-form spinoffs off the long video.</p>
 </article>
 <article class="card">
-  <div class="card-top">
-    <span class="sid">SS028</span>
-    <div class="meter"><div class="meter-track"><div class="meter-fill" style="width:85%"></div></div><span class="meter-n">85</span></div>
-  </div>
+  <div class="card-top"><span class="sid">SS028</span>
+    <div class="meter"><div class="meter-track"><div class="meter-fill" style="width:85%"></div></div><span class="meter-n">85</span></div></div>
   <div class="tags"><span class="aud">Operator Importer</span><span class="sep">/</span><span class="art">CSM</span></div>
   <h3 class="spark">Yiwu sells. Datang makes the socks, Yongkang the hardware, Pujiang the crystal.</h3>
   <p class="why">Yiwu is a trading city ringed by specialist towns within a two-hour radius: Datang socks (70 percent of China), Yongkang hardware (60 percent of exports), Pujiang crystal. Buy in the right town, not the Yiwu booth.</p>
-  <div class="metaline"><span class="mk">Format</span>Carousel, Reel, YouTube</div>
-  <p class="note"><span class="note-k">Note</span>Extends SS002 (Yiwu vs Foshan) with the specific cluster map. Datang produces, Yiwu sells (大唐产, 义乌卖).</p>
-</article></div>
-</section><section id="sec-cj" class="sec">
-  <div class="sec-head"><span class="sec-eyebrow">Source</span><h2>CJ Dropshipping event</h2><p class="sec-sub">Two sparks. Clemens x Mango, opens up Operator E-commerce coverage.</p></div>
+  <div class="metaline"><span class="mk">Format</span>Carousel, Reel, YouTube</div><p class="note"><span class="note-k">Note</span>Extends SS002 (Yiwu vs Foshan) with the specific cluster map. Datang produces, Yiwu sells (大唐产, 义乌卖).</p>
+</article></div></section><section id="sec-malaysia" class="sec">
+  <div class="sec-head"><span class="sec-eyebrow">Source</span><h2>Malaysia Spark</h2></div>
   <div class="cards"><article class="card">
-  <div class="card-top">
-    <span class="sid">SS019</span>
-    <div class="meter"><div class="meter-track"><div class="meter-fill" style="width:90%"></div></div><span class="meter-n">90</span></div>
-  </div>
-  <div class="tags"><span class="aud">Operator E-commerce</span><span class="sep">/</span><span class="art">CJ Dropshipping event</span></div>
-  <h3 class="spark">80 to 90 percent of dropshippers fail in year one</h3>
-  <p class="why">WorldFirst&#x27;s Clemens opened the CJ Dropshipping event with this survival stat. A real number from a real stage, not a blog cliche. Frames every downstream survivor-pattern and cost-discipline angle. Hard hook for Operator E-commerce.</p>
-  <div class="metaline"><span class="mk">Format</span>Reel, LinkedIn longform, YouTube</div>
-  <p class="note"><span class="note-k">Note</span>Event-sourced (public CJ x WF stage). Pairs as the opener hook above SS020 survivor patterns. New audience coverage: Operator E-commerce was thin in the bank.</p>
-</article>
-<article class="card">
-  <div class="card-top">
-    <span class="sid">SS020</span>
-    <div class="meter"><div class="meter-track"><div class="meter-fill" style="width:89%"></div></div><span class="meter-n">89</span></div>
-  </div>
-  <div class="tags"><span class="aud">Operator E-commerce</span><span class="sep">/</span><span class="art">CJ Dropshipping event</span></div>
-  <h3 class="spark">Five patterns of dropshippers doing 3 million dollars a month</h3>
-  <p class="why">CJ&#x27;s Mango surveyed her highest-volume clients. The five: right market and niche, customer trust, financial health while scaling, smooth payment flow, simple products. A listicle backed by a real survey, and payment flow is the natural WorldFirst bridge.</p>
-  <div class="metaline"><span class="mk">Format</span>Carousel, Reel, YouTube</div>
-  <p class="note"><span class="note-k">Note</span>3M/mo is a customer revenue tier said publicly on stage, not WF spend, privacy-clean. Pattern 4 (smooth payment flow) is the WF product hook, save for the end.</p>
-</article></div>
-</section><section id="sec-my" class="sec">
-  <div class="sec-head"><span class="sec-eyebrow">Source</span><h2>Malaysia Spark v2</h2><p class="sec-sub">Three transferable agent, FX and timing mechanisms. Not Malaysia-locked.</p></div>
-  <div class="cards"><article class="card">
-  <div class="card-top">
-    <span class="sid">SS023</span>
-    <div class="meter"><div class="meter-track"><div class="meter-fill" style="width:90%"></div></div><span class="meter-n">90</span></div>
-  </div>
+  <div class="card-top"><span class="sid">SS023</span>
+    <div class="meter"><div class="meter-track"><div class="meter-fill" style="width:90%"></div></div><span class="meter-n">90</span></div></div>
   <div class="tags"><span class="aud">Operator Importer</span><span class="sep">/</span><span class="art">general</span></div>
   <h3 class="spark">Your agent charges no fee, then hands you a worse exchange rate</h3>
   <p class="why">Malaysia research lifts the real agent pricing trick from seller forums: no service fee, but the rate carries a hidden markup (divide by 1.91, times 1.08). The fee wears a costume. Distinct from the visible commission kickback.</p>
-  <div class="metaline"><span class="mk">Format</span>Reel, Carousel, LinkedIn longform</div>
-  <p class="note"><span class="note-k">Note</span>Transferable beyond Malaysia (TH/VN repurposing). Different mechanism from SS001 (12pc commission kickback): this is a hidden FX-rate markup.</p>
+  <div class="metaline"><span class="mk">Format</span>Reel, Carousel, LinkedIn longform</div><p class="note"><span class="note-k">Note</span>Transferable beyond Malaysia (TH/VN repurposing). Different mechanism from SS001 (12pc commission kickback): this is a hidden FX-rate markup.</p>
 </article>
 <article class="card">
-  <div class="card-top">
-    <span class="sid">SS026</span>
-    <div class="meter"><div class="meter-track"><div class="meter-fill" style="width:88%"></div></div><span class="meter-n">88</span></div>
-  </div>
+  <div class="card-top"><span class="sid">SS026</span>
+    <div class="meter"><div class="meter-track"><div class="meter-fill" style="width:88%"></div></div><span class="meter-n">88</span></div></div>
   <div class="tags"><span class="aud">Operator Importer</span><span class="sep">/</span><span class="art">general</span></div>
   <h3 class="spark">Your last supplier payment landed in a person&#x27;s bank account, not a company&#x27;s</h3>
   <p class="why">Malaysia research surfaces the structural risk of the agent model: agents pool many buyers&#x27; money into one personal account, then pay China in a batch. No company to call when it goes wrong.</p>
-  <div class="metaline"><span class="mk">Format</span>Reel, LinkedIn longform</div>
-  <p class="note"><span class="note-k">Note</span>Risk angle, friction-break. Pairs with SS023 as the &#x27;what your agent will not tell you&#x27; pair.</p>
+  <div class="metaline"><span class="mk">Format</span>Reel, LinkedIn longform</div><p class="note"><span class="note-k">Note</span>Risk angle, friction-break. Pairs with SS023 as the &#x27;what your agent will not tell you&#x27; pair.</p>
 </article>
 <article class="card">
-  <div class="card-top">
-    <span class="sid">SS027</span>
-    <div class="meter"><div class="meter-track"><div class="meter-fill" style="width:87%"></div></div><span class="meter-n">87</span></div>
-  </div>
+  <div class="card-top"><span class="sid">SS027</span>
+    <div class="meter"><div class="meter-track"><div class="meter-fill" style="width:87%"></div></div><span class="meter-n">87</span></div></div>
   <div class="tags"><span class="aud">Operator Importer</span><span class="sep">/</span><span class="art">general</span></div>
   <h3 class="spark">618 and 11.11 are not sale days for you, they are the supplier jam</h3>
   <p class="why">Malaysia research reframes China&#x27;s festival calendar as a sourcing tool. When all of China buys, factories prioritise big domestic orders, lead times stretch, and a slow payment misses the production window. Builds the case for paying fast.</p>
-  <div class="metaline"><span class="mk">Format</span>Reel, Carousel</div>
-  <p class="note"><span class="note-k">Note</span>Timely: 618 lands mid-June. If produced, schedule first. Transferable to any China-sourcing market.</p>
-</article></div>
-</section>
-
+  <div class="metaline"><span class="mk">Format</span>Reel, Carousel</div><p class="note"><span class="note-k">Note</span>Timely: 618 lands mid-June. If produced, schedule first. Transferable to any China-sourcing market.</p>
+</article></div></section><section id="sec-cj" class="sec">
+  <div class="sec-head"><span class="sec-eyebrow">Source</span><h2>CJ Dropshipping event</h2></div>
+  <div class="cards"><article class="card">
+  <div class="card-top"><span class="sid">SS019</span>
+    <div class="meter"><div class="meter-track"><div class="meter-fill" style="width:90%"></div></div><span class="meter-n">90</span></div></div>
+  <div class="tags"><span class="aud">Operator E-commerce</span><span class="sep">/</span><span class="art">CJ Dropshipping event</span></div>
+  <h3 class="spark">80 to 90 percent of dropshippers fail in year one</h3>
+  <p class="why">WorldFirst&#x27;s Clemens opened the CJ Dropshipping event with this survival stat. A real number from a real stage, not a blog cliche. Frames every downstream survivor-pattern and cost-discipline angle. Hard hook for Operator E-commerce.</p>
+  <div class="metaline"><span class="mk">Format</span>Reel, LinkedIn longform, YouTube</div><p class="note"><span class="note-k">Note</span>Event-sourced (public CJ x WF stage). Pairs as the opener hook above SS020 survivor patterns. New audience coverage: Operator E-commerce was thin in the bank.</p>
+</article>
+<article class="card">
+  <div class="card-top"><span class="sid">SS020</span>
+    <div class="meter"><div class="meter-track"><div class="meter-fill" style="width:89%"></div></div><span class="meter-n">89</span></div></div>
+  <div class="tags"><span class="aud">Operator E-commerce</span><span class="sep">/</span><span class="art">CJ Dropshipping event</span></div>
+  <h3 class="spark">Five patterns of dropshippers doing 3 million dollars a month</h3>
+  <p class="why">CJ&#x27;s Mango surveyed her highest-volume clients. The five: right market and niche, customer trust, financial health while scaling, smooth payment flow, simple products. A listicle backed by a real survey, and payment flow is the natural WorldFirst bridge.</p>
+  <div class="metaline"><span class="mk">Format</span>Carousel, Reel, YouTube</div><p class="note"><span class="note-k">Note</span>3M/mo is a customer revenue tier said publicly on stage, not WF spend, privacy-clean. Pattern 4 (smooth payment flow) is the WF product hook, save for the end.</p>
+</article></div></section><section id="sec-meetings" class="sec">
+  <div class="sec-head"><span class="sec-eyebrow">Source</span><h2>Meetings</h2></div>
+  <div class="cards"><article class="card">
+  <div class="card-top"><span class="sid">SS029<span class="flag">flagged</span></span>
+    <div class="meter"><div class="meter-track"><div class="meter-fill" style="width:82%"></div></div><span class="meter-n">82</span></div></div>
+  <div class="tags"><span class="aud">Operator Importer</span><span class="sep">/</span><span class="art">general</span></div>
+  <h3 class="spark">Who stands behind your payment provider is a trust decision, not fine print</h3>
+  <p class="why">WorldFirst&#x27;s Malaysia client visits surfaced trust as the number one buying signal: a recognised financial backer builds confidence, an unfamiliar brand name reads as suspicious. Heritage is a moat for importers wiring large sums to suppliers they cannot see.</p>
+  <div class="metaline"><span class="mk">Format</span>LinkedIn longform, Reel</div><p class="note"><span class="note-k">Note</span>Meeting-sourced (SEA weekly, Sylvia&#x27;s MY client-visit insight). Generalised audience signal only: competitor names, client names, CPA, payback and account figures excluded by the privacy gate. Flagged because it edges toward brand positioning. Confirm it reads as customer education, not sales-deck, before sharpening.</p>
+</article></div></section>
     <section id="filtering">
-      <p class="sec-eyebrow">Audit trail</p>
-      <h2>Filtering &amp; drops</h2>
-      <p class="sec-sub">What did not make the cut, and why. Most losses were at the scoring stage, not the gates.</p>
+      <p class="sec-eyebrow">Audit trail</p><h2>Filtering &amp; gates</h2>
       <div class="gates">
-        <div class="gate"><div class="n">1</div><div class="l">Privacy gate</div></div>
+        <div class="gate"><div class="n">4</div><div class="l">Privacy gate</div></div>
         <div class="gate"><div class="n">0</div><div class="l">Audience gate</div></div>
-        <div class="gate"><div class="n">0</div><div class="l">Purpose gate</div></div>
-        <div class="gate"><div class="n">10</div><div class="l">Bottom-50pc cut</div></div>
+        <div class="gate"><div class="n">4</div><div class="l">Purpose gate</div></div>
+        <div class="gate"><div class="n">22</div><div class="l">Raw candidates</div></div>
       </div>
-      <table>
-        <thead><tr><th>Candidate</th><th>Score</th><th>Why it dropped</th></tr></thead>
-        <tbody><tr><td class="d-name">CJ · Don&#x27;t convert, collect</td><td class="d-score">83</td><td class="d-why">Strongest near-miss. Clean multi-currency collection reframe, just under the cut.</td></tr>
-<tr><td class="d-name">Malaysia · Pay in CNY for a cheaper next quote</td><td class="d-score">84</td><td class="d-why">Novel reframe, held for the next batch.</td></tr>
-<tr><td class="d-name">Malaysia · Two buyers, one factory, whose ships first</td><td class="d-score">83</td><td class="d-why">Payment speed as access. Overlaps the festival-jam angle (SS027).</td></tr>
-<tr><td class="d-name">Malaysia · Reverse-image-search 10 &#x27;local&#x27; brands</td><td class="d-score">83</td><td class="d-why">Demonstrable TOFU trick, just outside the top 10.</td></tr>
-<tr><td class="d-name">Yiwu · Agent commission tiers 8-10pc down to 3-5pc</td><td class="d-score">75</td><td class="d-why">Overlaps SS001 (12pc agent kickback).</td></tr>
-<tr><td class="d-name">Malaysia · 8 yuan to RM39 margin chain</td><td class="d-score">75</td><td class="d-why">Overlaps SS003 (five hidden taxes).</td></tr>
-<tr><td class="d-name">Malaysia · 1688 verification myth-bust</td><td class="d-score">76</td><td class="d-why">Overlaps ST001 (source 1688 without an agent).</td></tr>
-<tr><td class="d-name">CJ · Buyers decide in seconds / Trending is a trap / After-sale</td><td class="d-score">67-79</td><td class="d-why">Ecom-101 generic, lower differentiation.</td></tr>
-<tr><td class="d-name">Yiwu · Wholesale-only after 4pm / chicken-feathers origin</td><td class="d-score">64-71</td><td class="d-why">Narrative colour, not an audience-pain spark.</td></tr></tbody>
-      </table>
-      <p class="skip"><b>Privacy skip:</b> _compact_latest.md (paid-ops / Meta Ads internals), consistent with prior scans.</p>
-      <p class="skip"><b>Skipped on purpose:</b> the electronics-china board is a fresh Step-1 brainstorm, mostly derivative of existing bank themes. Banking a live spark board is circular, so it was left for /spark_listen.</p>
+      <p class="gate-notes">First non-zero scan since 2026-05-13, now including the Meetings store as a routine source. Banked from artifacts: Yiwu EP.3 research (5), CJ Dropshipping event cuts (2, Operator E-commerce), Malaysia Spark v2 (3). Meetings pass: 6 meetings in window (asia-bits-sourcing, judy-event, sylvia-malaysia, icp-localization-trust, sylvia-okr-kol, thao-vietnam). Only 1 customer-content spark survived the gates (SS029, trust-as-buying-signal, flagged). Privacy gate held back: _compact_latest (paid-ops), thao-vietnam (&quot;Thao&quot; keyword + KOL), sylvia-okr-viral-kol (OKR + KOL), and all internal CPA/payback/client/competitor data inside the SEA weekly. Purpose gate held back: asia-bits (production-ops / agency contract), most of the SEA weekly (marketing-ops), judy-event (event-ops), sylvia-malaysia (internal strategy). Scoring cut dropped 10 session/handoff near-misses (strongest: CJ &#x27;don&#x27;t convert collect&#x27; 83). electronics-china board skipped as a fresh Step-1 brainstorm.</p>
     </section>
-  </main>
-</div>
+  </main></div>
 <script>
   const links=[...document.querySelectorAll('.nav-link')];
   const map=Object.fromEntries(links.map(l=>[l.dataset.t,l]));
-  const obs=new IntersectionObserver((es)=>{
-    es.forEach(e=>{ if(e.isIntersecting){
-      links.forEach(l=>l.classList.remove('active'));
-      const a=map[e.target.id]; if(a)a.classList.add('active');
-    }});
-  },{rootMargin:'-20% 0px -72% 0px',threshold:0});
-  ['overview',"sec-yiwu", "sec-cj", "sec-my",'filtering'].forEach(id=>{
-    const el=document.getElementById(id); if(el)obs.observe(el);
-  });
-</script>
-</body>
-</html>
+  const obs=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('active'));const a=map[e.target.id];if(a)a.classList.add('active');}});},{rootMargin:'-20% 0px -72% 0px',threshold:0});
+  ["overview", "sec-yiwu", "sec-malaysia", "sec-cj", "sec-meetings", "filtering"].forEach(id=>{const el=document.getElementById(id);if(el)obs.observe(el);});
+</script></body></html>
